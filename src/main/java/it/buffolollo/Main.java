@@ -25,36 +25,15 @@ public class Main {
             System.out.println(" ----------------------------- ");
         }
 
-        //
+        VideoDetails vd = yt.searchByVideoID("LKda2tqAebc");
 
-        results = yt.searchByVideoName("50 special lunapop");
+        System.out.println(vd.getTitle());
+        System.out.println(vd.getChannelName());
+        System.out.println(vd.getVideoID());
 
-        for (VideoDetails vd : results) {
-            System.out.println(vd.getTitle());
-            System.out.println(vd.getDescription());
-            System.out.println(vd.getChannelName());
-            System.out.println(vd.getDuration());
-            System.out.println(vd.getViews());
-            System.out.println(vd.getVideoID());
-            System.out.println(vd.getThumbnails());
-
-            System.out.println(" ----------------------------- ");
-        }
-
-        //
-
-        results = yt.searchByVideoName("gigolò sfera");
-
-        for (VideoDetails vd : results) {
-            System.out.println(vd.getTitle());
-            System.out.println(vd.getDescription());
-            System.out.println(vd.getChannelName());
-            System.out.println(vd.getDuration());
-            System.out.println(vd.getViews());
-            System.out.println(vd.getVideoID());
-            System.out.println(vd.getThumbnails());
-
-            System.out.println(" ----------------------------- ");
+        System.out.println("Thumbnails: ");
+        for(Thumbnail t : vd.getThumbnails()) {
+            System.out.println(t.getUrl());
         }
     }
 }

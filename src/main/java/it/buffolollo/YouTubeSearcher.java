@@ -94,7 +94,86 @@ public class YouTubeSearcher {
    }
 
    public VideoDetails searchByVideoID(String videoID) {
-      return null; // Implement this method based on requirements
+      try {
+         Connection session = Jsoup.newSession();
+
+         // Perform necessary requests to establish session
+         session.newRequest("https://www.youtube.com")
+               .userAgent(
+                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36")
+               .method(Method.GET).followRedirects(true).execute();
+
+         // Request the video page directly
+         Connection.Response response = session.newRequest("https://www.youtube.com/watch")
+               .data("v", videoID)
+               .followRedirects(true)
+               .method(Method.GET).execute();
+
+         // Parse the response to extract video details
+         String resBody = response.body();
+         int startIndex = resBody.indexOf("var ytInitialPlayerResponse");
+         if (startIndex == -1) {
+            return null;
+         }
+
+         resBody = resBody.substring(resBody.indexOf('{', startIndex));
+         int endIndex = resBody.indexOf("};") + 1;
+         resBody = resBody.substring(0, endIndex);
+
+         JsonObject jsonObject = JsonParser.parseString(resBody).getAsJsonObject();
+         JsonObject videoDetails = jsonObject.getAsJsonObject("videoDetails");
+
+         if (videoDetails == null) {
+            return null;
+         }
+
+         // Create VideoDetails object from the extracted data
+         String title = videoDetails.get("title").getAsString();
+         String description = videoDetails.get("shortDescription").getAsString();
+         String channelName = videoDetails.get("author").getAsString();
+         String videoId = videoDetails.get("videoId").getAsString();
+
+         // Views need to be parsed from viewCount string
+         long views = 0;
+         try {
+            views = Long.parseLong(videoDetails.get("viewCount").getAsString());
+         } catch (NumberFormatException e) {
+            // Handle exception if needed
+         }
+
+         // Duration is in seconds in this response
+         long duration = 0;
+         if (jsonObject.has("microformat")) {
+            JsonObject microformat = jsonObject.getAsJsonObject("microformat")
+                  .getAsJsonObject("playerMicroformatRenderer");
+            if (microformat.has("lengthSeconds")) {
+               duration = microformat.get("lengthSeconds").getAsLong();
+            }
+         }
+
+         // Get thumbnails
+         Thumbnail[] thumbnails = new Thumbnail[0];
+         if (videoDetails.has("thumbnail")) {
+            JsonObject thumbnailsObj = videoDetails.getAsJsonObject("thumbnail");
+            if (thumbnailsObj.has("thumbnails")) {
+               JsonArray thumbnailsArray = thumbnailsObj.getAsJsonArray("thumbnails");
+
+               thumbnails = new Thumbnail[thumbnailsArray.size()];
+
+               for (int i = 0; i < thumbnailsArray.size(); i++) {
+                  JsonObject thumbObj = thumbnailsArray.get(i).getAsJsonObject();
+                  String url = thumbObj.get("url").getAsString();
+                  int width = thumbObj.get("width").getAsInt();
+                  int height = thumbObj.get("height").getAsInt();
+                  thumbnails[i] = new Thumbnail(height, width, url);
+               }
+            }
+         }
+
+         return new VideoDetails(title, description, channelName, thumbnails, duration, views, videoId);
+      } catch (IOException e) {
+         return null;
+      }
    }
 
    public VideoDetails searchByVideoURL(String videoURL) {
