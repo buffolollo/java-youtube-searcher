@@ -121,6 +121,29 @@ public class YouTubeSearcher {
          resBody = resBody.substring(0, endIndex);
 
          JsonObject jsonObject = JsonParser.parseString(resBody).getAsJsonObject();
+
+         JsonObject streamingData = jsonObject.getAsJsonObject("streamingData");
+
+         String streamUrl = null;
+
+         if (streamingData != null) {
+            if (streamingData.has("formats")) {
+               JsonArray formats = streamingData.getAsJsonArray("formats");
+               // Let's try to find a format with a direct URL (without signatureCipher)
+               for (JsonElement formatElement : formats) {
+                  JsonObject format = formatElement.getAsJsonObject();
+                  System.out.println(format);
+                  if (format.has("url")) {
+                     streamUrl = format.get("url").getAsString();
+                     System.out.println("Found a direct stream URL: " + streamUrl);
+                     break; // Found one, let's use it
+                  }
+               }
+            }
+            // You might also want to check "adaptiveFormats" for audio-only streams
+            // if (streamUrl == null && streamingData.has("adaptiveFormats")) { ... }
+         }
+
          JsonObject videoDetails = jsonObject.getAsJsonObject("videoDetails");
 
          if (videoDetails == null) {

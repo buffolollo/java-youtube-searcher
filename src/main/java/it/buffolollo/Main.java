@@ -8,52 +8,56 @@ public class Main {
 
         YouTubeSearcher yt = new YouTubeSearcher(1);
 
-        ArrayList<VideoDetails> results = new ArrayList<>();
+        VideoDetails vd = yt.searchByVideoID("9bZkp7q19f0");
 
-        String[] videoNames = {
-                "hysteria muse HQ",
-                "Rosanna toto",
-                "africa toto",
-                "all the small things blink 182",
-                "smells like teen spirit nirvana",
-                "sweet child o mine guns n roses",
-                "stairway to heaven led zeppelin",
-                "bohemian rhapsody queen",
-                "back in black acdc",
-                "highway to hell acdc",
-        };
+        System.out.println(vd.getTitle());
 
-        int totalTime = 0;
+        // ArrayList<VideoDetails> results = new ArrayList<>();
 
-        for (int i = 0; i < 20; i++) {
-            long startTime = System.currentTimeMillis();
+        // String[] videoNames = {
+        // "hysteria muse HQ",
+        // "Rosanna toto",
+        // "africa toto",
+        // "all the small things blink 182",
+        // "smells like teen spirit nirvana",
+        // "sweet child o mine guns n roses",
+        // "stairway to heaven led zeppelin",
+        // "bohemian rhapsody queen",
+        // "back in black acdc",
+        // "highway to hell acdc",
+        // };
 
-            results = yt.searchByVideoName(videoNames[i % videoNames.length]);
+        // int totalTime = 0;
 
-            for (VideoDetails vd : results) {
-                System.out.println(i + ". - " + vd.getTitle());
+        // for (int i = 0; i < 20; i++) {
+        // long startTime = System.currentTimeMillis();
 
-            }
+        // results = yt.searchByVideoName(videoNames[i % videoNames.length]);
 
-            long endTime = System.currentTimeMillis();
+        // for (VideoDetails vd : results) {
+        // System.out.println(i + ". - " + vd.getTitle());
 
-            int finalTime = (int) ((endTime - startTime));
+        // }
 
-            System.out.println("Execution time: " + (finalTime) + " ms");
+        // long endTime = System.currentTimeMillis();
 
-            totalTime += finalTime;
+        // int finalTime = (int) ((endTime - startTime));
 
-            // Sleep for 1 second to avoid overwhelming the server
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        // System.out.println("Execution time: " + (finalTime) + " ms");
 
-            System.out.println("--------------------------------------------------");
-        }
+        // totalTime += finalTime;
 
-        System.out.println("Total execution time: " + totalTime + " ms");
-        System.out.println("Average execution time: " + (totalTime / 20) + " ms");
+        // // Sleep for 1 second to avoid overwhelming the server
+        // try {
+        // Thread.sleep(1000);
+        // } catch (InterruptedException e) {
+        // e.printStackTrace();
+        // }
+
+        // System.out.println("--------------------------------------------------");
+        // }
+
+        // System.out.println("Total execution time: " + totalTime + " ms");
+        // System.out.println("Average execution time: " + (totalTime / 20) + " ms");
     }
 }
